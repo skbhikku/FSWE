@@ -1,4 +1,3 @@
-
 import axios from "axios";
 import type { Product } from "../types/product";
 
@@ -11,8 +10,22 @@ const getAuthHeaders = () => ({
 });
 
 export const getProducts = async (): Promise<Product[]> => {
-    const response = await axios.get<Product[]>(API_URL);
-    return response.data;
+    try {
+        const response = await axios.get(API_URL);
+        const data = response.data;
+
+        // Handle every possible backend response shape safely
+        if (Array.isArray(data)) return data;
+        if (data && Array.isArray(data.content)) return data.content;    // Spring Page
+        if (data && Array.isArray(data.data)) return data.data;          // wrapped {data: []}
+        if (data && Array.isArray(data.products)) return data.products;  // {products: []}
+
+        console.warn("Unexpected /api/products response shape:", data);
+        return [];
+    } catch (err) {
+        console.error("getProducts failed:", err);
+        return [];
+    }
 };
 
 export const addProduct = async (
