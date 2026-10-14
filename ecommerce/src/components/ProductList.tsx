@@ -17,7 +17,10 @@ function ProductList({ isAdmin = false }: ProductListProps) {
 
     useEffect(() => {
         getProducts()
-            .then(setProducts)
+            .then((data) => {
+                setProducts(Array.isArray(data) ? data : []);
+                setError("");
+            })
             .catch(() => setError("Unable to load products"))
             .finally(() => setLoading(false));
     }, []);
@@ -25,17 +28,18 @@ function ProductList({ isAdmin = false }: ProductListProps) {
     const categories = [
         "All",
         ...new Set(
-            products
+            (Array.isArray(products) ? products : [])
                 .map((product) => product.category)
                 .filter(Boolean)
         )
     ];
 
-    const filteredProducts = products.filter((product) =>
-        product.productName
-            .toLowerCase()
-            .includes(search.toLowerCase()) &&
-        (category === "All" || product.category === category)
+    const filteredProducts = (Array.isArray(products) ? products : []).filter(
+        (product) =>
+            (product.productName || "")
+                .toLowerCase()
+                .includes(search.toLowerCase()) &&
+            (category === "All" || product.category === category)
     );
 
     if (loading) {
