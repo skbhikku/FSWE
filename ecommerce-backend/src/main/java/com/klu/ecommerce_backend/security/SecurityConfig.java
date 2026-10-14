@@ -109,7 +109,8 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(
                 List.of(
                     "http://localhost:5173",
-                    "https://smart-cart-psi-one.vercel.app"
+                    "https://smart-cart-psi-one.vercel.app",
+                    "https://ecommercesmart.netlify.app"
                 )
         );
 
